@@ -1,13 +1,13 @@
 const form = document.getElementById("addForm");
 const itemsList = document.getElementById("items");
-console.log("itemsList", itemsList);
 
-
+// Добавление новой задачи - просушка
 form.addEventListener("submit", addItem);
 
+// Добавление новой задачи - функция
 function addItem(e){
 
-    // Отсеняем отправку формы
+    // Отменяем отправку формы
     e.preventDefault();
 
     // Находим импут с текстом для добавления новой задачи
@@ -46,9 +46,22 @@ function addItem(e){
 
     // Очищаем импут после добавления новой задачи
     newItemInput.value = "";
-
-
-    
-
 }
+
+// Удаление элемента - прослушка
+itemsList.addEventListener("click", removeItem);
+
+// Удаление элемента - функция
+function removeItem (e) {
+    if (
+        e.target.hasAttribute("data-action") &&
+        e.target.getAttribute("data-action") == "delete"
+    ) {
+        if (confirm("Действительно удалить эту задачу?")) {
+            e.target.parentNode.remove();
+        }
+    }
+}
+
+
 
