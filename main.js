@@ -1,8 +1,15 @@
 const form = document.getElementById("addForm");
 const itemsList = document.getElementById("items");
+const filter = document.getElementById("filter");
 
 // Добавление новой задачи - просушка
 form.addEventListener("submit", addItem);
+
+// Удаление элемента - прослушка
+itemsList.addEventListener("click", removeItem);
+
+// Фильтрация списка дел - прослушка 
+filter.addEventListener ("keyup", filterItems);
 
 // Добавление новой задачи - функция
 function addItem(e){
@@ -48,11 +55,8 @@ function addItem(e){
     newItemInput.value = "";
 }
 
-// Удаление элемента - прослушка
-itemsList.addEventListener("click", removeItem);
-
 // Удаление элемента - функция
-function removeItem (e) {
+function removeItem(e){
     if (
         e.target.hasAttribute("data-action") &&
         e.target.getAttribute("data-action") == "delete"
@@ -61,6 +65,31 @@ function removeItem (e) {
             e.target.parentNode.remove();
         }
     }
+}
+
+// Фильтрация списка дел - функция
+function filterItems(e){
+
+    // Поулчаем фразу для поиска и переводим в нижний регистр
+    const searchedText = e.target.value.toLowerCase();
+
+    // 1. Получаем список всех задач
+    const items = itemsList.querySelectorAll("li");
+
+    // Перебираем циклом все найденные теги li с задачей
+    items.forEach (function(item){
+
+        // Получаем текст задачи из списка и переводим его в нижний регистр
+        const itemText = item.firstChild.textContent.toLowerCase();
+
+        // Проверяем вхождение искомой подстроки в текст задачи
+        if(itemText.indexOf(searchedText) != -1){
+            item.style.display = "block";
+        } else{
+            item.style.display = "none";
+        }
+    })
+
 }
 
 
