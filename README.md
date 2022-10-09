@@ -7,5 +7,7 @@ Use of technology:
 <li> HTML and CSS provided by the school</li>
 </ul>
 
+You can view the project by following the link: https://gulyaevsergey.github.io/Todo-List/
+
 
 
