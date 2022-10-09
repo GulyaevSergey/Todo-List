@@ -2,6 +2,23 @@ const form = document.getElementById("addForm");
 const itemsList = document.getElementById("items");
 const filter = document.getElementById("filter");
 
+// Создаем пустой массив tasks
+let tasks = [];
+
+/*
+Проверяем есть ли в нем данные по ключу tasks,
+Если данные есть, тогда забираем их, парсим из JSON в маассив и записываем в массив tasks
+Если данных нет, тогда оставляем переменную tasks пустым массивом
+*/
+if (localStorage.getItem('tasks')) {
+    tasks = JSON.parse(localStorage.getItem('tasks'));
+}
+
+// Рендерим задачи на странице из массива
+tasks.forEach(function (item) {
+    renderTask(item);
+});
+
 // Добавление новой задачи - просушка
 form.addEventListener("submit", addItem);
 
@@ -10,6 +27,28 @@ itemsList.addEventListener("click", removeItem);
 
 // Фильтрация списка дел - прослушка 
 filter.addEventListener ("keyup", filterItems);
+
+function renderTask(taskText){
+
+    // Создаем элемент для новой задачи
+    const newElement = document.createElement('li');
+    newElement.className = 'list-group-item';
+    // Добавим текст в новый элемент
+    const newTextNode = document.createTextNode(taskText);
+    newElement.appendChild(newTextNode);
+    // Создаем кнопку
+    const deleteBtn = document.createElement('button');
+    // Добавляем текст
+    deleteBtn.appendChild(document.createTextNode('Удалить'));
+    // Добавляем CSS class
+    deleteBtn.className = 'btn btn-light btn-sm float-right';
+    // Добавляем data атрибут
+    deleteBtn.dataset.action = 'delete';
+    // Помещаем кнопку внутрь тега li
+    newElement.appendChild(deleteBtn);
+    // Добавляем новую задачу в список со всеми задачами
+    itemsList.prepend(newElement);
+}
 
 // Добавление новой задачи - функция
 function addItem(e){
@@ -21,35 +60,15 @@ function addItem(e){
     const newItemInput = document.getElementById("newItemText");
 
     // Получаем текст из инпута
-    const newItemText = newItemInput.value;
+    const newItemText = newItemInput.value;    
 
-    // Создаем элемент для новой задачи
-    const newElement = document.createElement("li");
-    newElement.className = "list-group-item";
+    renderTask(newItemText);
 
-    // Добавляем текст в новый элемент
-    const newElementText = document.createTextNode(newItemText);
-    newElement.appendChild(newElementText);
-    
+    // Добавляем задачу в массив
+	tasks.push(newItemText);
 
-    // Создаем кнопку
-    const deleteBtn = document.createElement("button");
-
-    // Добавляем текст в кнопку
-    deleteBtn.appendChild(document.createTextNode("Удалить"));
-
-    // Добавляем класс для кнопки
-    deleteBtn.className = "btn btn-light btn-sm float-right";
-
-    // Добавляем дата атрибут
-    deleteBtn.dataset.action = "delete";
-
-    // Помещаем кнопку внутрь тега li
-    newElement.appendChild(deleteBtn);
-    console.log("newElement", newElement);
-
-    // Добавляем новую задачу в список
-    itemsList.prepend(newElement);
+    // Обновляем список задач в lokalStorage
+	localStorage.setItem('tasks', JSON.stringify(tasks));
 
     // Очищаем импут после добавления новой задачи
     newItemInput.value = "";
@@ -64,6 +83,24 @@ function removeItem(e){
         if (confirm("Действительно удалить эту задачу?")) {
             e.target.parentNode.remove();
         }
+
+        // Получаем текст задачи которую надо удалить
+        const taskText = e.target.closest('.list-group-item').firstChild.textContent;
+
+        // Находим индекс задачи в массиве tasks
+        const index = tasks.findIndex(function (item) {
+            if (taskText === item) {
+                return true
+            }
+        })
+
+        // Удаляем задачу из массива tasks
+        if (index !== -1) {
+            tasks.splice(index, 1);
+        }
+
+        // Обновляем localStorage
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 }
 
